@@ -2,23 +2,30 @@ import streamlit as st
 import pickle
 import numpy as np
 
-st.set_page_config(page_title="Churn App", layout="centered")
+# Page config
+st.set_page_config(page_title="Churn Predictor", layout="centered")
 
+# Load model
 @st.cache_resource
 def load_model():
-    return pickle.load(open("model.pkl", "rb"))
+    with open("model.pkl", "rb") as f:
+        return pickle.load(f)
 
 model = load_model()
 
+# UI
 st.title("🚀 Customer Churn Predictor")
+
+st.write("Enter customer details below:")
 
 age = st.number_input("Age", 18, 100, 30)
 income = st.selectbox("Income", ["Low Income", "Middle Income", "High Income"])
 flyer = st.selectbox("Frequent Flyer", ["No", "Yes"])
-services = st.number_input("Services", 1, 10, 3)
-social = st.selectbox("Social Media", ["No", "Yes"])
-hotel = st.selectbox("Hotel Booking", ["No", "Yes"])
+services = st.number_input("Services Used", 1, 10, 3)
+social = st.selectbox("Social Media Linked", ["No", "Yes"])
+hotel = st.selectbox("Booked Hotel", ["No", "Yes"])
 
+# Prediction
 if st.button("Predict"):
     try:
         ff = 1 if flyer == "Yes" else 0
@@ -28,12 +35,12 @@ if st.button("Predict"):
 
         data = np.array([[age, ff, inc, services, sm, ht]])
 
-        pred = model.predict(data)
+        prediction = model.predict(data)
 
-        if pred[0] == 1:
+        if prediction[0] == 1:
             st.error("⚠️ High Churn Risk")
         else:
             st.success("✅ Customer Will Stay")
 
     except Exception as e:
-        st.error(e)
+        st.error(f"Error: {e}")
