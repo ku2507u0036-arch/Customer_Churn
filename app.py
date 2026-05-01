@@ -1,5 +1,5 @@
 import streamlit as st
-import joblib
+import pickle
 import numpy as np
 
 st.set_page_config(page_title="ChurnSense Pro", page_icon="🚀", layout="centered")
@@ -15,10 +15,8 @@ html, body, [data-testid="stAppViewContainer"] {
     color: white;
 }
 
-/* Hide default */
 #MainMenu, footer, header {visibility: hidden;}
 
-/* Title */
 .title {
     text-align: center;
     font-size: 2.7rem;
@@ -28,14 +26,12 @@ html, body, [data-testid="stAppViewContainer"] {
     -webkit-text-fill-color: transparent;
 }
 
-/* Subtitle */
 .subtitle {
     text-align: center;
     color: #94a3b8;
     margin-bottom: 20px;
 }
 
-/* Card */
 .card {
     background: rgba(255,255,255,0.05);
     padding: 25px;
@@ -45,7 +41,6 @@ html, body, [data-testid="stAppViewContainer"] {
     margin-top: 15px;
 }
 
-/* Section */
 .section {
     font-size: 0.8rem;
     color: #94a3b8;
@@ -53,7 +48,6 @@ html, body, [data-testid="stAppViewContainer"] {
     margin-bottom: 10px;
 }
 
-/* Button */
 .stButton>button {
     width: 100%;
     background: linear-gradient(90deg,#38bdf8,#a78bfa);
@@ -67,7 +61,6 @@ html, body, [data-testid="stAppViewContainer"] {
     opacity: 0.9;
 }
 
-/* Result Cards */
 .success {
     background: rgba(34,197,94,0.1);
     padding: 18px;
@@ -90,7 +83,7 @@ html, body, [data-testid="stAppViewContainer"] {
 # ---------- LOAD MODEL ----------
 @st.cache_resource
 def load_model():
-    return joblib.load("model.pkl")
+    return pickle.load(open("model.pkl", "rb"))   # ✅ no joblib needed
 
 model = load_model()
 
@@ -126,7 +119,6 @@ st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------- PREDICT ----------
 if st.button("🚀 Predict Churn"):
-
     try:
         ff = 1 if FrequentFlyer == "Yes" else 0
         asm = 1 if AccountSyncedToSocialMedia == "Yes" else 0
